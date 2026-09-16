@@ -1,0 +1,11 @@
+json.products @products do |product|
+  json.id product.id
+  json.name product.name
+  json.description product.description
+  json.sku product.sku
+  json.price product.price
+  json.discount_price product.discount_price
+  json.status product.status
+  json.brand product.brand
+  json.weight product.weight
+end
