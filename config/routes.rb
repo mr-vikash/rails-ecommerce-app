@@ -19,6 +19,10 @@ Rails.application.routes.draw do
 
       post '/signup', to: 'auth#signup'
       post '/login', to: 'auth#login'
+
+      resource :cart, only: [:show] do
+        resources :cart_items, only: [:create, :update, :destroy]
+      end
     end
   end
 end

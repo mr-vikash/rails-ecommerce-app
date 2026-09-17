@@ -1,12 +1,12 @@
-class Authentication
-  extend ActiveSuppport::Concern
+module Authentication
+  extend ActiveSupport::Concern
 
   included do
     before_action :authenticate_user
   end
 
   def authenticate_user
-    token = request.headers['Authrization']&.split(" ").last
+    token = request.headers['Authorization']&.split(" ")&.last
 
     if token.blank?
       render json: { error: "Authentication token is required"},
@@ -22,5 +22,9 @@ class Authentication
   rescue ActiveRecord::RecordNotFound
     render json: { error: "User not found"},
            status: :unauthorized
+  end
+
+  def current_user
+    @current_user
   end
 end

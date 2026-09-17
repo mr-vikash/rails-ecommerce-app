@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :addresses
   has_many :orders, dependent: :destroy
   has_one  :wishlist, dependent: :destroy
+  has_one  :cart, dependent: :destroy
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true

@@ -70,7 +70,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
 
   create_table "carts", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.string "status", default: "active", null: false
+    t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_carts_on_user_id"
@@ -183,6 +183,20 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["product_id"], name: "index_product_images_on_product_id"
   end
 
+  create_table "product_variants", force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.string "sku", null: false
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.integer "stock_quantity", default: 0, null: false
+    t.string "size"
+    t.string "color"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_product_variants_on_product_id"
+    t.index ["sku"], name: "index_product_variants_on_sku", unique: true
+  end
+
   create_table "products", force: :cascade do |t|
     t.integer "category_id", null: false
     t.string "name", null: false
@@ -260,6 +274,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
   add_foreign_key "payments", "orders"
   add_foreign_key "payments", "users"
   add_foreign_key "product_images", "products"
+  add_foreign_key "product_variants", "products"
   add_foreign_key "products", "categories"
   add_foreign_key "reviews", "orders"
   add_foreign_key "reviews", "products"

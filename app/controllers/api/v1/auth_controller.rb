@@ -3,6 +3,7 @@ class Api::V1::AuthController < ApplicationController
   def signup
     @user = User.new(user_params)
     if @user.save
+      @user.create_cart
       render :signup, status: :created
     else
       render json: { errors: @user.errors.full_messages}, status: :unprocessable_entity
