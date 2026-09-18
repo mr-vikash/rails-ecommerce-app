@@ -1,5 +1,6 @@
 class Api::V1::CategoriesController < ApplicationController
   include Authentication
+
   def index
     @categories = Category.all
   end
