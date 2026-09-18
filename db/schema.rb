@@ -11,7 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
-  create_table "active_storage_attachments", force: :cascade do |t|
+  create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -21,7 +21,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", force: :cascade do |t|
+  create_table "active_storage_blobs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -33,14 +33,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_variant_records", force: :cascade do |t|
+  create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "addresses", force: :cascade do |t|
-    t.integer "user_id", null: false
+  create_table "addresses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.string "address_type"
     t.string "full_name", null: false
     t.string "phone"
@@ -56,9 +56,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["user_id"], name: "index_addresses_on_user_id"
   end
 
-  create_table "cart_items", force: :cascade do |t|
-    t.integer "cart_id", null: false
-    t.integer "product_variant_id", null: false
+  create_table "cart_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "cart_id", null: false
+    t.bigint "product_variant_id", null: false
     t.integer "quantity", default: 1, null: false
     t.decimal "unit_price", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
@@ -68,19 +68,19 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["product_variant_id"], name: "index_cart_items_on_product_variant_id"
   end
 
-  create_table "carts", force: :cascade do |t|
-    t.integer "user_id", null: false
+  create_table "carts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_carts_on_user_id"
   end
 
-  create_table "categories", force: :cascade do |t|
+  create_table "categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
     t.string "slug", null: false
-    t.integer "parent_id"
+    t.bigint "parent_id"
     t.string "status", default: "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -88,7 +88,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
-  create_table "coupons", force: :cascade do |t|
+  create_table "coupons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "code", null: false
     t.string "discount_type", null: false
     t.decimal "discount_value", precision: 10, scale: 2, null: false
@@ -104,8 +104,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["code"], name: "index_coupons_on_code", unique: true
   end
 
-  create_table "inventory_transactions", force: :cascade do |t|
-    t.integer "product_variant_id", null: false
+  create_table "inventory_transactions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "product_variant_id", null: false
     t.string "transaction_type", null: false
     t.integer "quantity", null: false
     t.string "reference_type"
@@ -116,9 +116,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["reference_type", "reference_id"], name: "idx_on_reference_type_reference_id_30e938d718"
   end
 
-  create_table "order_coupons", force: :cascade do |t|
-    t.integer "order_id", null: false
-    t.integer "coupon_id", null: false
+  create_table "order_coupons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "coupon_id", null: false
     t.decimal "discount_amount", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -127,9 +127,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["order_id"], name: "index_order_coupons_on_order_id"
   end
 
-  create_table "order_items", force: :cascade do |t|
-    t.integer "order_id", null: false
-    t.integer "product_variant_id", null: false
+  create_table "order_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "product_variant_id", null: false
     t.string "product_name", null: false
     t.string "sku", null: false
     t.integer "quantity", default: 1, null: false
@@ -142,8 +142,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["product_variant_id"], name: "index_order_items_on_product_variant_id"
   end
 
-  create_table "orders", force: :cascade do |t|
-    t.integer "user_id", null: false
+  create_table "orders", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.string "order_number", null: false
     t.string "status", default: "pending", null: false
     t.string "payment_status", default: "pending", null: false
@@ -159,9 +159,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
-  create_table "payments", force: :cascade do |t|
-    t.integer "order_id", null: false
-    t.integer "user_id", null: false
+  create_table "payments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "user_id", null: false
     t.string "transaction_id", null: false
     t.integer "payment_method", null: false
     t.decimal "amount", precision: 10, scale: 2, null: false
@@ -175,16 +175,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
-  create_table "product_images", force: :cascade do |t|
-    t.integer "product_id", null: false
+  create_table "product_images", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "product_id", null: false
     t.integer "position", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_product_images_on_product_id"
   end
 
-  create_table "product_variants", force: :cascade do |t|
-    t.integer "product_id", null: false
+  create_table "product_variants", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "product_id", null: false
     t.string "sku", null: false
     t.decimal "price", precision: 10, scale: 2, null: false
     t.integer "stock_quantity", default: 0, null: false
@@ -197,8 +197,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["sku"], name: "index_product_variants_on_sku", unique: true
   end
 
-  create_table "products", force: :cascade do |t|
-    t.integer "category_id", null: false
+  create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "category_id", null: false
     t.string "name", null: false
     t.text "description"
     t.string "sku", null: false
@@ -213,10 +213,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["sku"], name: "index_products_on_sku", unique: true
   end
 
-  create_table "reviews", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "product_id", null: false
-    t.integer "order_id", null: false
+  create_table "reviews", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "order_id", null: false
     t.integer "rating", null: false
     t.string "title"
     t.text "comment"
@@ -229,7 +229,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
     t.string "password_digest", null: false
@@ -241,9 +241,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  create_table "wishlist_items", force: :cascade do |t|
-    t.integer "wishlist_id", null: false
-    t.integer "product_id", null: false
+  create_table "wishlist_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "wishlist_id", null: false
+    t.bigint "product_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_wishlist_items_on_product_id"
@@ -251,8 +251,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
     t.index ["wishlist_id"], name: "index_wishlist_items_on_wishlist_id"
   end
 
-  create_table "wishlists", force: :cascade do |t|
-    t.integer "user_id", null: false
+  create_table "wishlists", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_wishlists_on_user_id"
