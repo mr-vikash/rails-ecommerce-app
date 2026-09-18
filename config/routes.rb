@@ -16,8 +16,10 @@ Rails.application.routes.draw do
     namespace :v1 do
 
       resources :categories
-      resources :products
-      get "/product_detail/:id", to: 'products#product_detail'
+      resources :products do
+        get :product_detail, on: :member  # get "/product_detail/:id", to: 'products#product_detail' both will work fine
+      end
+
 
       resources :product_variants
 
