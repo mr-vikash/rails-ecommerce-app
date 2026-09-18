@@ -46,6 +46,13 @@ module Api
         render json: {error: "Record not found"}, status: :not_found
       end
 
+      def product_detail
+        @product = Product.includes(:category, :product_variants).find(params[:id])
+        unless @product
+          render json: { error: "Product not found"}, status: :not_found
+        end
+      end
+
 
       private
 
