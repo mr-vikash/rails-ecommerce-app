@@ -27,7 +27,11 @@ Rails.application.routes.draw do
       post '/login', to: 'auth#login'
 
       resource :cart, only: [:show] do
-        resources :cart_items, only: [:create, :update, :destroy]
+        delete :clear, on: :collection
+      end
+
+      resources :cart_items do
+        delete :clear_cart_items, on: :collection
       end
     end
   end
