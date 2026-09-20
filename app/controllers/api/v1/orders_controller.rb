@@ -2,7 +2,7 @@ class Api::V1::OrdersController < ApplicationController
   include Authentication
 
   def index
-    @orders = current_user.orders
+    @orders = current_user.orders.order(created_at: :desc)
     unless @orders
       render json: { error: "no orders for this user" }, status: :not_found
     end
