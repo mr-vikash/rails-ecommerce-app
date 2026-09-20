@@ -1,6 +1,21 @@
 class Api::V1::OrdersController < ApplicationController
   include Authentication
 
+  def index
+    @orders = current_user.orders
+    unless @orders
+      render json: { error: "no orders for this user" }, status: :not_found
+    end
+  end
+
+  def show
+    @order = Order.find_by(id: params[:id])
+
+    unless @order
+      render json: { error: "Order not found"}, status: :not_found
+    end
+  end
+
   def create
     @cart = current_user.cart
 
@@ -10,7 +25,7 @@ class Api::V1::OrdersController < ApplicationController
     end
 
     @cart_items = @cart.cart_items
-    unless @cart
+    if @cart_items.empty?
       render json: {error: "Cart is Empty"}, status: :unprocessable_entity
       return
     end
