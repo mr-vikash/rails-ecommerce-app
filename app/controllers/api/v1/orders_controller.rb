@@ -30,6 +30,10 @@ class Api::V1::OrdersController < ApplicationController
         subtotal += cart_item.quantity*cart_item.unit_price
       end
 
+
+
+      Rails.logger.info("Someting happening..")
+
       #create_order
        @order = current_user.orders.create!(
         order_number: "ORD-#{SecureRandom.hex(5).upcase}",
@@ -49,6 +53,7 @@ class Api::V1::OrdersController < ApplicationController
         product = variant.product
 
         OrderItem.create!(
+          order_id: @order.id,
           product_variant_id: variant.id,
           product_name: product.name,
           sku: variant.sku,
@@ -57,7 +62,7 @@ class Api::V1::OrdersController < ApplicationController
           total_price: cart_item.quantity * cart_item.unit_price
         )
 
-        variant.decreament!(:stock_quantity, cart_item.quantity)
+        variant.decrement!(:stock_quantity, cart_item.quantity)
       end
       @cart_items.destroy_all
     end
