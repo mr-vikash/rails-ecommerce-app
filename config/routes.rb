@@ -32,7 +32,12 @@ Rails.application.routes.draw do
 
       resources :cart_items
 
-      resources :orders, only: [:create, :show, :index]
+      resources :orders, only: [:create, :show, :index] do
+        post :checkout, on: :member
+      end
+
+      post "/payments/verify", to: "payments#verify"
+      post "webhooks/razorpay", to: "webhooks#razorpay"
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_21_063456) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -162,15 +162,20 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_15_173551) do
   create_table "payments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "order_id", null: false
     t.bigint "user_id", null: false
-    t.string "transaction_id", null: false
+    t.string "transaction_id"
     t.integer "payment_method", null: false
     t.decimal "amount", precision: 10, scale: 2, null: false
     t.string "currency", default: "INR", null: false
-    t.string "status", default: "pending", null: false
     t.datetime "paid_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0, null: false
+    t.string "razorpay_order_id"
+    t.string "razorpay_payment_id"
+    t.string "razorpay_signature"
     t.index ["order_id"], name: "index_payments_on_order_id"
+    t.index ["razorpay_order_id"], name: "index_payments_on_razorpay_order_id", unique: true
+    t.index ["razorpay_payment_id"], name: "index_payments_on_razorpay_payment_id", unique: true
     t.index ["transaction_id"], name: "index_payments_on_transaction_id", unique: true
     t.index ["user_id"], name: "index_payments_on_user_id"
   end

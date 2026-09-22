@@ -9,7 +9,7 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def show
-    @order = Order.find_by(id: params[:id])
+    @order = Order.includes(order_items: { product_variant: :product } ).find_by(id: params[:id])
 
     unless @order
       render json: { error: "Order not found"}, status: :not_found
@@ -104,5 +104,60 @@ class Api::V1::OrdersController < ApplicationController
       status: "error",
       message: e.message
     }, status: :unprocessable_entity
+  end
+
+  def checkout
+    @order = current_user.orders.find(params[:id])
+
+    @order.with_lock do
+      if @order.payments.status_paid.exists?
+        return render json: {
+          status: "error",
+          message: "Order has already been paid"
+        }, status: :unprocessable_entity
+      end
+
+      if @order.payments.status_pending.exists?
+        return render json: {
+          status: "error",
+          message: "A payment is already in progress for this order"
+        }, status: :unprocessable_entity
+      end
+
+      razorpay_order = RazorpayService.create_order(
+        amount: @order.total_amount,
+        receipt: "order_#{@order.id}"
+      )
+
+      payment = @order.payments.create!(
+        user: current_user,
+        transaction_id: "pending_#{SecureRandom.uuid}",
+        payment_method: :razorpay,
+        amount: @order.total_amount,
+        currency: "INR",
+        status: "pending",
+        razorpay_order_id: razorpay_order.id
+      )
+
+      render json: {
+        status: "success",
+        message: "Checkout initialized successfully",
+        order: {
+          id: @order.id,
+          total_amount: @order.total_amount,
+          status: @order.status
+        },
+        payment: {
+          id: payment.id,
+          razorpay_order_id: razorpay_order.id,
+          amount: payment.amount,
+          currency: payment.currency,
+          status: payment.status
+        },
+        razorpay: {
+          key_id: ENV["RAZORPAY_KEY_ID"]
+        }
+      }
+    end
   end
 end
