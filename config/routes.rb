@@ -18,6 +18,8 @@ Rails.application.routes.draw do
       resources :categories
       resources :products do
         get :product_detail, on: :member  # get "/product_detail/:id", to: 'products#product_detail' both will work fine
+
+        resources :product_images
       end
 
 
