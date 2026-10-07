@@ -19,11 +19,19 @@ class Api::V1::PaymentsController < ApplicationController
     end
 
     begin
-      Razorpay::Utility.verify_payment_signature(
-        razorpay_order_id: :razorpay_order_id,
-        razorpay_payment_id: :razorpay_payment_id,
-        razorpay_signature: :razorpay_signature
-      )
+      # Razorpay::Utility.verify_payment_signature(
+      #   razorpay_order_id: :razorpay_order_id,
+      #   razorpay_payment_id: :razorpay_payment_id,
+      #   razorpay_signature: :razorpay_signature
+      # )
+
+       verified = FakePaymentService.verify_payment(
+          order_id: razorpay_order_id,
+          payment_id: razorpay_payment_id,
+          signature: razorpay_signature
+       )
+
+      
 
       Payment.transaction do
         payment.update!(
@@ -38,6 +46,17 @@ class Api::V1::PaymentsController < ApplicationController
           payment_status: :paid
         )
       end
+
+      KafkaProducer.publish(
+        "payment-events",
+        {
+          event: "payment.captured",
+          payment_id: payment.id,
+          order_id: payment.order_id,
+          amount: payment.amount.to_f,
+          currency: payment.currency
+        }
+      )
 
         render json: {
         status: "success",

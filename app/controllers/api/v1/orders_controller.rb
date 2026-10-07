@@ -124,7 +124,13 @@ class Api::V1::OrdersController < ApplicationController
         }, status: :unprocessable_entity
       end
 
-      razorpay_order = RazorpayService.create_order(
+      # razorpay_order = RazorpayService.create_order(
+      #   amount: @order.total_amount,
+      #   receipt: "order_#{@order.id}"
+      # )
+
+      # for testing purpose
+      fake_order = FakePaymentService.create_order(
         amount: @order.total_amount,
         receipt: "order_#{@order.id}"
       )
@@ -136,7 +142,7 @@ class Api::V1::OrdersController < ApplicationController
         amount: @order.total_amount,
         currency: "INR",
         status: "pending",
-        razorpay_order_id: razorpay_order.id
+        razorpay_order_id: fake_order[:id]
       )
 
       render json: {
@@ -149,7 +155,7 @@ class Api::V1::OrdersController < ApplicationController
         },
         payment: {
           id: payment.id,
-          razorpay_order_id: razorpay_order.id,
+          razorpay_order_id: fake_order[:id],
           amount: payment.amount,
           currency: payment.currency,
           status: payment.status
