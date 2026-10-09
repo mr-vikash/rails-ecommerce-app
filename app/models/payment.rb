@@ -1,6 +1,7 @@
 class Payment < ApplicationRecord
   belongs_to :user
   belongs_to :order
+  has_one :notification
 
   validates :transaction_id, uniqueness: true, allow_nil: true
   validates :payment_method, :amount, :currency, presence: true
