@@ -35,8 +35,7 @@ class NotificationConsumer
       rescue JSON::ParserError => e
         puts "Invalid event JSON: #{e.message}"
 
-        # Invalid JSON cannot be processed.
-        # Commit it so the consumer does not get stuck.
+        # Cannot process invalid JSON.
         commit_message(consumer, message)
 
       rescue StandardError => e
@@ -53,10 +52,6 @@ class NotificationConsumer
 
   private
 
-  # --------------------------------------------------
-  # Retry processing
-  # --------------------------------------------------
-
   def process_with_retry(event)
     attempts = 0
 
@@ -68,7 +63,6 @@ class NotificationConsumer
       case event["event"]
       when "payment.success"
         handle_payment_success(event)
-
       else
         raise "Unknown event: #{event["event"]}"
       end
@@ -96,13 +90,10 @@ class NotificationConsumer
     end
   end
 
-  # --------------------------------------------------
-  # Publish failed event to DLQ
-  # --------------------------------------------------
-
   def publish_to_dlq(event, error)
     dlq_event = event.merge(
       "retry_count" => MAX_RETRIES,
+      "dlq_retry_count" => event["dlq_retry_count"] || 0,
       "error" => error.message,
       "failed_at" => Time.current.iso8601
     )
@@ -114,10 +105,6 @@ class NotificationConsumer
 
     puts "Event published to notification-dlq"
   end
-
-  # --------------------------------------------------
-  # Commit Kafka offset
-  # --------------------------------------------------
 
   def commit_message(consumer, message)
     offsets = Rdkafka::Consumer::TopicPartitionList.new
@@ -137,10 +124,6 @@ class NotificationConsumer
          "offset=#{message.offset}"
   end
 
-  # --------------------------------------------------
-  # Payment success handler
-  # --------------------------------------------------
-
   def handle_payment_success(event)
     user = User.find_by(id: event["user_id"])
 
@@ -154,26 +137,22 @@ class NotificationConsumer
       raise "Payment not found: #{event["payment_id"]}"
     end
 
-    # ------------------------------------------------
-    # Idempotent notification
-    # ------------------------------------------------
+    notification = nil
 
-    notification = Notification.find_or_create_by!(
-      payment_id: event["payment_id"]
-    ) do |new_notification|
-      new_notification.user = user
-      new_notification.notification_type = "payment_success"
-      new_notification.title = "Payment Successful"
-      new_notification.message =
-        "Your payment of #{event["currency"]} #{event["amount"]} " \
-        "was successful for order ##{event["order_id"]}."
+    ActiveRecord::Base.transaction do
+      notification = Notification.find_or_create_by!(
+        payment_id: event["payment_id"]
+      ) do |new_notification|
+        new_notification.user = user
+        new_notification.notification_type = "payment_success"
+        new_notification.title = "Payment Successful"
+        new_notification.message =
+          "Your payment of #{event["currency"]} #{event["amount"]} " \
+          "was successful for order ##{event["order_id"]}."
+      end
     end
 
     puts "Notification ready: #{notification.id}"
-
-    # ------------------------------------------------
-    # Idempotent email
-    # ------------------------------------------------
 
     if notification.email_sent_at.nil?
 
@@ -181,9 +160,11 @@ class NotificationConsumer
         .payment_success(payment)
         .deliver_now
 
-      notification.update!(
-        email_sent_at: Time.current
-      )
+      ActiveRecord::Base.transaction do
+        notification.update!(
+          email_sent_at: Time.current
+        )
+      end
 
       puts "Payment success email sent to: #{user.email}"
 
