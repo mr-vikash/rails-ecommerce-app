@@ -1,12 +1,14 @@
 class KafkaProducer
   def self.publish(topic, message)
-    producer = KAFKA.producer
+    producer = Rdkafka::Config.new(
+      RDKAFKA_CONFIG
+    ).producer
 
     producer.produce(
-      message.to_json,
-      topic: topic
+      topic: topic,
+      payload: message.to_json
     )
 
-    producer.deliver_messages
+    producer.flush
   end
 end

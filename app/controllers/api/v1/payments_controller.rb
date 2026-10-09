@@ -31,8 +31,6 @@ class Api::V1::PaymentsController < ApplicationController
           signature: razorpay_signature
        )
 
-      
-
       Payment.transaction do
         payment.update!(
           status: :paid,
@@ -53,6 +51,7 @@ class Api::V1::PaymentsController < ApplicationController
           event: "payment.captured",
           payment_id: payment.id,
           order_id: payment.order_id,
+          user_id: payment.user_id,
           amount: payment.amount.to_f,
           currency: payment.currency
         }

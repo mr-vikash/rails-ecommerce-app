@@ -13,16 +13,18 @@ services:
 
   web:
     build: .
-    command: rails server -b 0.0.0.0
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"
+    env_file:
+      - .env
     environment:
-      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
-      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+      RAILS_ENV: development
     volumes:
       - .:/app
     ports:
       - "3000:3000"
     depends_on:
       - db
+      - kafka
 
   kafka:
     image: apache/kafka:4.0.0
@@ -33,16 +35,39 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
-
       KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+  consumer:
+    build: .
+    command: bash -c "bundle exec rails runner 'RdkafkaConsumer.new.start'"
+    env_file:
+      - .env
+    environment:
+      RAILS_ENV: development
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - kafka
+
+  notification_consumer:
+    build: .
+    command: bash -c "bundle exec rails runner 'NotificationConsumer.new.start'"
+    env_file:
+      - .env
+    environment:
+      RAILS_ENV: development
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - kafka
 
 volumes:
   mysql_data:

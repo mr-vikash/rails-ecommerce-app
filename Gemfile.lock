@@ -105,11 +105,10 @@ GEM
     debug (1.11.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
-    digest-crc (0.7.0)
-      rake (>= 12.0.0, < 14.0.0)
     drb (2.2.3)
     erb (6.0.7)
     erubi (1.13.1)
+    ffi (1.17.4-x86_64-linux-gnu)
     globalid (1.4.0)
       activesupport (>= 6.1)
     httparty (0.24.2)
@@ -230,6 +229,12 @@ GEM
       logger
       prism (>= 1.6.0)
       tsort
+    rdkafka (0.30.0-x86_64-linux-gnu)
+      ffi (~> 1.17.1)
+      json (> 2.0)
+      logger
+      mini_portile2 (~> 2.6)
+      rake (> 12)
     rdoc (8.0.0)
       erb
       prism (>= 1.6.0)
@@ -267,8 +272,6 @@ GEM
       rubocop (>= 1.72)
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
-    ruby-kafka (1.5.0)
-      digest-crc
     ruby-progressbar (1.13.0)
     rubyzip (3.6.0)
     securerandom (0.4.1)
@@ -334,8 +337,8 @@ DEPENDENCIES
   puma (>= 5.0)
   rails (~> 7.2.3, >= 7.2.3.1)
   razorpay (~> 3.2)
+  rdkafka
   rubocop-rails-omakase
-  ruby-kafka
   selenium-webdriver
   sprockets-rails
   stimulus-rails

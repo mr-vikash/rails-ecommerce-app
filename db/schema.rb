@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_21_063456) do
+ActiveRecord::Schema[7.2].define(version: 2026_10_09_060947) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -114,6 +114,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_21_063456) do
     t.datetime "updated_at", null: false
     t.index ["product_variant_id"], name: "index_inventory_transactions_on_product_variant_id"
     t.index ["reference_type", "reference_id"], name: "idx_on_reference_type_reference_id_30e938d718"
+  end
+
+  create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "notification_type"
+    t.string "title"
+    t.text "message"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "order_coupons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -271,6 +282,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_21_063456) do
   add_foreign_key "carts", "users"
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "inventory_transactions", "product_variants"
+  add_foreign_key "notifications", "users"
   add_foreign_key "order_coupons", "coupons"
   add_foreign_key "order_coupons", "orders"
   add_foreign_key "order_items", "orders"

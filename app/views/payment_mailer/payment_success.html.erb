@@ -1,0 +1,29 @@
+<h2>Payment Successful</h2>
+
+<p>Hi <%= @user.name %>,</p>
+
+<p>Your payment has been successfully received.</p>
+
+<h3>Payment Details</h3>
+
+<p>
+  <strong>Order ID:</strong>
+  #<%= @order.id %>
+</p>
+
+<p>
+  <strong>Amount:</strong>
+  ₹<%= @payment.amount %>
+</p>
+
+<p>
+  <strong>Payment Method:</strong>
+  <%= @payment.payment_method %>
+</p>
+
+<p>
+  <strong>Transaction ID:</strong>
+  <%= @payment.transaction_id %>
+</p>
+
+<p>Thank you for your payment.</p>
